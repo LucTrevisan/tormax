@@ -23,7 +23,11 @@ npm run dev          # http://localhost:5173
 
 - **Headset na rede local** (Quest etc.): `npm run dev:https` e abra `https://<ip-do-computador>:5173` no navegador do
   headset, aceitando o certificado autoassinado. O WebXR só funciona em HTTPS (ou em `localhost`).
-- **Publicar**: `npm run build` gera `dist/` com caminhos relativos (serve em GitHub Pages ou qualquer servidor estático).
+- **Publicar**: `npm run build` gera `dist/` com caminhos relativos (serve em qualquer servidor estático).
+  No GitHub, o workflow `.github/workflows/deploy.yml` faz o build e publica o `dist/` a cada push na `main`.
+  Configuração única no repositório: **Settings → Pages → Build and deployment → Source → “GitHub Actions”**.
+  Publicar a raiz do repositório (“Deploy from a branch”) serve o código-fonte cru e causa o erro
+  `Failed to resolve module specifier "@babylonjs/core"`.
 
 ## As cinco etapas
 

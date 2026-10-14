@@ -14,8 +14,6 @@ export function criarComponentesUI({ selecao, focar, aoAbrirGrandeza }) {
   const lista = $("#lista-componentes");
   const cartao = $("#cartao-info");
   const dica = $("#dica");
-  const lateral = $("#lateral-esquerda");
-  const btnComponentes = $("#btn-componentes");
 
   const sensoresDe = (c) => GRANDEZAS.filter((g) => g.componente === c.id);
 
@@ -40,20 +38,6 @@ export function criarComponentesUI({ selecao, focar, aoAbrirGrandeza }) {
     selecao.selecionar(c);
     focarComponente(c);
   });
-
-  btnComponentes.addEventListener("click", () => {
-    const oculta = lateral.classList.toggle("oculta");
-    btnComponentes.setAttribute("aria-pressed", String(!oculta));
-    // em tela estreita só um painel lateral por vez
-    if (!oculta && window.matchMedia("(max-width: 900px)").matches) {
-      document.getElementById("lateral-direita").classList.add("oculta");
-      document.getElementById("btn-medicoes")?.setAttribute("aria-pressed", "false");
-    }
-  });
-  if (window.matchMedia("(max-width: 900px)").matches) {
-    lateral.classList.add("oculta");
-    btnComponentes.setAttribute("aria-pressed", "false");
-  }
 
   function focarComponente(c) {
     if (!c || !c.malhas.length) return;

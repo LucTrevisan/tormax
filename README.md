@@ -100,14 +100,19 @@ A Sessão 02 é a atividade da proposta: localizar quando a vibração começou,
    Citar algo que não aconteceu desconta; propor troca de peça antes de confirmar a causa também.
 5. **Revelar situação** mostra a explicação; **Baixar relatório** gera um .txt com evidências, respostas e avaliação.
 
-## No celular
+## Painéis recolhíveis (desktop e celular)
 
-Em telas de até 900 px, o topo fica compacto (título, estado da conexão e os quatro modos) e uma barra de abas na base
-abre as folhas **Peças**, **Medições** e **Controles** (painel do modo atual). Só uma folha fica aberta por vez, e ela
-recolhe pelo **×**, tocando de novo na aba, arrastando o cabeçalho para baixo ou com o **Voltar** do aparelho.
-Enquanto uma folha está aberta, a vista 3D sobe para o torno continuar visível. Configurações e a resposta do desafio
-abrem em tela cheia, com **×** no topo e botões fixos no rodapé. Tudo isso está em `src/ui/layoutMovel.js` e no fim
-de `src/style.css`; a lógica do app é a mesma do desktop.
+Uma doca de abas embaixo abre e recolhe os painéis **Peças**, **Medições** e **Controles** (painel do modo atual).
+Cada painel tem **×** no cabeçalho, e a vista 3D se desloca para o torno ficar no centro da área livre.
+
+- **Desktop:** os três painéis começam abertos, como antes, e podem ficar abertos juntos. Recolhem para as
+  laterais e para baixo pelo ×, pela aba da doca ou com **Esc** (o último aberto).
+- **Celular (até 900 px):** topo compacto (título, conexão e os quatro modos); os painéis viram folhas que sobem
+  da base, uma por vez, e recolhem pelo ×, tocando de novo na aba, arrastando o cabeçalho para baixo ou com o
+  **Voltar** do aparelho. Configurações e a resposta do desafio abrem em tela cheia, com × e botões fixos no rodapé.
+
+Tudo isso está em `src/ui/layoutPaineis.js` e no fim de `src/style.css`; a lógica do app é a mesma em qualquer tela.
+Para ver o layout de celular no computador: F12 → Ctrl+Shift+M (modo dispositivo).
 
 ## Dentro do headset
 

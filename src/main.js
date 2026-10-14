@@ -25,7 +25,7 @@ import { criarFonteReplay } from "./fontes/fonteReplay.js";
 import { criarPainelReplay } from "./ui/painelReplay.js";
 import { criarGravacaoUI } from "./ui/gravacaoUI.js";
 import { criarPainelDesafio } from "./ui/painelDesafio.js";
-import { criarLayoutMovel } from "./ui/layoutMovel.js";
+import { criarLayoutPaineis } from "./ui/layoutPaineis.js";
 import { concluirCarregamento, erroCarregamento, progressoCarregamento } from "./ui/carregamento.js";
 
 const parametros = new URLSearchParams(location.search);
@@ -50,9 +50,9 @@ async function iniciar() {
   // abrir uma grandeza: cartão no HUD, gráfico no painel de RV e câmera no ponto medido
   let sensoresUI = null;
   let painelXR = null;
-  let alternarMedicoes = null;
+  let mostrarMedicoes = null; // definido pelo layout dos painéis
   const abrirGrandeza = (id, { focarCamera = true } = {}) => {
-    alternarMedicoes?.(true);
+    mostrarMedicoes?.();
     sensoresUI?.abrir(id);
     painelXR?.definirGrandeza(id);
     const g = GRANDEZA_POR_ID[id];
@@ -63,7 +63,6 @@ async function iniciar() {
   criarComponentesUI({ selecao, focar, aoAbrirGrandeza: (id) => abrirGrandeza(id) });
   sensoresUI = criarSensoresUI({ fluxo, config, aoSelecionarGrandeza: (id) => id && painelXR?.definirGrandeza(id) });
   criarConexaoUI({ fluxo });
-  alternarMedicoes = criarAlternadorMedicoes();
   sincronizarCena({ fluxo, config, pontos, placa });
 
   // ---------- RV / RA
@@ -172,8 +171,9 @@ async function iniciar() {
 
   await modos.ativar(parametros.get("modo") ?? "simulacao");
 
-  // celular: abas e folhas que recolhem (só interface)
-  const layoutMovel = criarLayoutMovel({ camera, scene });
+  // painéis recolhíveis com doca de abas, no desktop e no celular (só interface)
+  const layout = criarLayoutPaineis({ camera, scene });
+  mostrarMedicoes = () => layout.mostrar("medicoes");
 
   // Compila os shaders antes de revelar a cena (evita peças surgindo aos poucos).
   await scene.whenReadyAsync();
@@ -209,31 +209,11 @@ async function iniciar() {
     replay,
     painelReplay,
     painelDesafio,
-    layoutMovel,
+    layout,
     vistaInicial,
     moverRotulo: (id, x, y, z) => pontos.mover(id, x, y, z),
   });
   window.__pronto = true;
-}
-
-/** Em tela estreita, o painel de medições abre e fecha pelo botão do topo (um painel lateral por vez). */
-function criarAlternadorMedicoes() {
-  const estreito = () => window.matchMedia("(max-width: 900px)").matches;
-  const botao = document.getElementById("btn-medicoes");
-  const direita = document.getElementById("lateral-direita");
-  const esquerda = document.getElementById("lateral-esquerda");
-  const alternar = (abrir = direita.classList.contains("oculta")) => {
-    if (!estreito()) return;
-    direita.classList.toggle("oculta", !abrir);
-    botao.setAttribute("aria-pressed", String(abrir));
-    if (abrir) {
-      esquerda.classList.add("oculta");
-      document.getElementById("btn-componentes").setAttribute("aria-pressed", "false");
-    }
-  };
-  if (estreito()) direita.classList.add("oculta");
-  botao.addEventListener("click", () => alternar());
-  return alternar;
 }
 
 iniciar().catch((erro) => {

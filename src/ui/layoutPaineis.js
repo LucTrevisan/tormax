@@ -133,8 +133,6 @@ export function criarLayoutPaineis({ camera = null, scene = null } = {}) {
       if (fechandoPeloVoltar) fechandoPeloVoltar = false;
       else desempilhar();
     }
-    const nova = ordem[ordem.length - 1];
-    if (nova && antes === 0) porId(nova).el.scrollTop = 0;
   }
   const observador = new MutationObserver(sincronizar);
   for (const f of folhas) observador.observe(f.el, { attributes: true, attributeFilter: ["class"] });

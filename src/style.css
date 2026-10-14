@@ -602,6 +602,7 @@ textarea { resize: vertical; width: 100%; }
   .folha #painel-componentes > h2,
   .folha .painel-sensores > .cab-sensores > h2 { display: none; }
   .folha .cab-sensores { justify-content: flex-end; }
+  .folha .sensor { scroll-margin-top: 70px; }
   .rodape.folha { justify-content: flex-start; }
   .folha [data-acao="recolher"] { display: none; }
   .folha .painel-simulacao > .cab-modo { display: none; } /* o cabeçalho da folha já diz o modo */
@@ -681,7 +682,24 @@ textarea { resize: vertical; width: 100%; }
 
 /* ---------- Desktop: mesmos painéis, recolhíveis, com doca de abas flutuante ---------- */
 @media (min-width: 901px) {
-  #hud { padding-bottom: 74px; } /* espaço da doca */
+  /* laterais em altura total (do topo até a doca); o painel de controles fica na coluna
+     central e se alarga quando uma lateral é recolhida */
+  #hud {
+    padding-bottom: 74px; /* espaço da doca */
+    grid-template-areas:
+      "topo topo topo"
+      "esq . dir"
+      "esq rodape dir";
+  }
+  #hud:has(#lateral-esquerda.oculta) {
+    grid-template-areas: "topo topo topo" "esq . dir" "rodape rodape dir";
+  }
+  #hud:has(#lateral-direita.oculta) {
+    grid-template-areas: "topo topo topo" "esq . dir" "esq rodape rodape";
+  }
+  #hud:has(#lateral-esquerda.oculta):has(#lateral-direita.oculta) {
+    grid-template-areas: "topo topo topo" "esq . dir" "rodape rodape rodape";
+  }
   .folha {
     background: var(--fundo-painel);
     border: 1px solid var(--borda);
@@ -723,7 +741,7 @@ textarea { resize: vertical; width: 100%; }
   #painel-componentes > h2,
   .painel-sensores > .cab-sensores > h2 { display: none; }
   .cab-sensores { justify-content: flex-end; }
-  .rodape.folha { display: flex; flex-direction: column; justify-self: center; width: min(1180px, 100%); min-width: 0; }
+  .rodape.folha { display: flex; flex-direction: column; justify-self: center; width: 100%; max-width: 1180px; min-width: 0; }
   .rodape.folha .painel-modo { width: 100%; max-height: 38vh; padding: 0; }
   .folha [data-acao="recolher"] { display: none; }
   .folha .painel-modo.recolhido .corpo-modo { display: flex; }

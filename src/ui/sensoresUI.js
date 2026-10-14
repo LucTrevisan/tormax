@@ -156,7 +156,8 @@ export function criarSensoresUI({ fluxo, config, aoSelecionarGrandeza }) {
       c.spark.hidden = sim;
     }
     if (id && vista !== "cartoes") definirVista("cartoes");
-    if (id) cartoes.get(id).el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // rola até o início do cartão aberto (com "nearest", um cartão alto mostrava só o fim)
+    if (id) cartoes.get(id).el.scrollIntoView({ block: "start", behavior: "smooth" });
     if (doUsuario) aoSelecionarGrandeza?.(id);
     atualizar();
   }

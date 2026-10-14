@@ -110,7 +110,7 @@ button { font-family: inherit; }
 }
 .marca { display: flex; flex-direction: column; min-width: 0; margin-right: auto; }
 .marca strong { font-size: 15px; }
-.marca span { color: var(--texto-sutil); font-size: 12px; }
+.marca .subtitulo { color: var(--texto-sutil); font-size: 12px; }
 .modos { display: flex; gap: 4px; }
 .acoes { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
@@ -222,27 +222,6 @@ button { font-family: inherit; }
 .preenchimento { height: 100%; width: 0; background: var(--destaque); transition: width 0.2s; }
 #progresso-texto { color: var(--texto-sutil); font-size: 12px; }
 #carregando.erro .caixa-carregando strong { color: var(--alarme); }
-
-/* ---------- Telas estreitas ---------- */
-@media (max-width: 900px) {
-  #hud {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: "topo" "." "rodape";
-    padding: 8px 16px;
-  }
-  .marca span { display: none; }
-  .lateral {
-    position: absolute;
-    top: 64px;
-    bottom: 8px;
-    width: min(320px, calc(100vw - 32px));
-    z-index: 2;
-  }
-  .esquerda { left: 16px; }
-  .direita { right: 16px; }
-  .cartao-info { left: 16px; right: 16px; width: auto; min-width: 0; bottom: 8px; }
-}
 
 /* ---------- Painel de medições ---------- */
 .painel-sensores { gap: 8px; overflow: hidden; }
@@ -426,11 +405,11 @@ canvas.navegavel { cursor: pointer; }
 
 /* ---------- Ajustes da barra superior ---------- */
 .marca { flex: 1 1 240px; min-width: 0; }
-.marca strong, .marca span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.marca strong, .marca .subtitulo { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .conexao { max-width: 340px; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
 .conexao::before { display: inline-block; margin-right: 6px; vertical-align: middle; }
 @media (max-width: 1250px) {
-  .marca span { display: none; }
+  .marca .subtitulo { display: none; }
   .conexao { max-width: 240px; }
 }
 
@@ -463,29 +442,240 @@ textarea { resize: vertical; width: 100%; }
   .corpo-desafio { grid-template-columns: 1fr; }
 }
 
-/* ---------- Telas estreitas: laterais viram painéis inferiores, um por vez ---------- */
-.so-estreito { display: none; }
+.cab-sensores, .info-fonte { flex-shrink: 0; }
+
+/* =====================================================================
+   Celular e telas estreitas: topo compacto, barra de abas e folhas que
+   sobem da base e recolhem (×, toque na aba, arrastar para baixo ou Voltar).
+   ===================================================================== */
+.so-estreito,
+.titulo-curto,
+.cab-folha,
+.barra-abas,
+.fechar-dialogo { display: none; }
+
 @media (max-width: 900px) {
-  .so-estreito { display: inline-flex; }
-  .topo { gap: 6px 8px; padding: 6px 8px; }
-  .marca { flex-basis: 100%; }
-  .marca strong { font-size: 13px; }
-  .modos { overflow-x: auto; max-width: 100%; }
-  .modos .botao, .acoes .botao { padding: 6px 9px; font-size: 12.5px; }
-  .conexao { max-width: 100%; }
-  .lateral {
+  :root {
+    --altura-abas: calc(60px + env(safe-area-inset-bottom, 0px));
+    --altura-topo: 92px;
+  }
+  #hud { display: block; padding: 0; }
+
+  /* topo: título + estado + ações na 1ª linha, modos na 2ª */
+  .topo {
     position: fixed;
-    top: auto;
-    bottom: 8px;
-    left: 16px;
-    right: 16px;
+    top: calc(6px + env(safe-area-inset-top, 0px));
+    left: 6px;
+    right: 6px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "marca acoes" "modos modos";
+    gap: 6px 8px;
+    padding: 7px 8px;
+    z-index: 6;
+  }
+  .marca { grid-area: marca; flex: none; justify-content: center; }
+  .marca strong { font-size: 14px; }
+  .titulo-longo, .marca .subtitulo, .texto-longo { display: none; }
+  .titulo-curto { display: inline; }
+  .acoes { grid-area: acoes; flex-wrap: nowrap; gap: 4px; }
+  #btn-componentes, #btn-medicoes { display: none !important; }
+  .conexao { max-width: 38vw; font-size: 11.5px; padding: 5px 9px; }
+  .modos { grid-area: modos; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .modos .botao { padding: 8px 2px; font-size: 13px; text-align: center; }
+  .acoes .botao { padding: 7px 9px; min-height: 34px; }
+
+  /* barra de abas */
+  .barra-abas {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--altura-abas);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--fundo-painel-forte);
+    border-top: 1px solid var(--borda);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.3);
+    z-index: 7;
+  }
+  .aba {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: 0;
+    color: var(--texto-sutil);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .aba svg { width: 22px; height: 22px; }
+  .aba[aria-expanded="true"] { color: var(--texto); }
+  .aba[aria-expanded="true"] svg { color: var(--destaque); }
+  .aba:focus-visible { outline: 2px solid var(--destaque); outline-offset: -4px; border-radius: 8px; }
+
+  /* folhas (Componentes, Medições e Controles do modo) */
+  .folha {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--altura-abas);
+    max-height: min(56dvh, calc(100dvh - var(--altura-abas) - var(--altura-topo) - 16px));
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 12px 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #0f151c;
+    border: 1px solid var(--borda);
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+    z-index: 5;
+    transform: translateY(0);
+    transition: transform 0.24s ease, visibility 0.24s;
+  }
+  .folha.oculta { transform: translateY(105%); visibility: hidden; }
+  .folha.arrastando { transition: none; }
+  .cab-folha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 -12px 6px;
+    padding: 16px 8px 8px 16px;
+    background: #0f151c;
+    border-bottom: 1px solid var(--borda);
+    touch-action: none;
+    cursor: grab;
+  }
+  .puxador {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 42px;
+    height: 4px;
+    margin-left: -21px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .cab-folha h2 { flex: 1; margin: 0; font-size: 14px; color: var(--texto); }
+  .fechar-folha, .fechar-dialogo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--borda);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--texto);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .fechar-folha svg, .fechar-dialogo svg { width: 20px; height: 20px; }
+
+  /* o conteúdo rola junto com a folha (um só rolamento) */
+  .folha > .painel,
+  .folha .painel-modo {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    padding: 0;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+  }
+  .folha .painel-sensores,
+  .folha .lista-sensores,
+  .folha .lista-componentes { overflow: visible; }
+  .folha #painel-componentes > h2,
+  .folha .painel-sensores > .cab-sensores > h2 { display: none; }
+  .folha .cab-sensores { justify-content: flex-end; }
+  .rodape.folha { justify-content: flex-start; }
+  .folha [data-acao="recolher"] { display: none; }
+  .folha .painel-simulacao > .cab-modo { display: none; } /* o cabeçalho da folha já diz o modo */
+  .folha .painel-modo.recolhido .corpo-modo { display: flex; }
+  .folha .painel-replay .corpo-replay,
+  .folha .painel-desafio .corpo-desafio { display: grid; }
+
+  /* conteúdo dos modos em uma coluna */
+  .cab-modo { flex-wrap: wrap; }
+  .cab-modo select { max-width: 100%; flex: 1 1 100%; }
+  .grupo-controle { min-width: 0; flex: 1 1 100%; }
+  .corpo-replay, .corpo-desafio { grid-template-columns: minmax(0, 1fr); }
+  .gravacao { flex: 1 1 100%; }
+  .linha-marcar { flex-wrap: wrap; }
+  .linha-marcar input { flex: 1 1 100%; }
+  .grafico-comparacao { min-height: 300px; }
+
+  /* cartão do componente: acima das abas, com rolagem própria */
+  .cartao-info {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--altura-abas) + 8px);
     width: auto;
-    max-height: 62vh;
+    min-width: 0;
+    max-height: 42dvh;
+    overflow-y: auto;
     z-index: 4;
   }
-  .lateral.oculta { display: none; }
-  .rodape .painel-modo { max-height: 34vh; }
-  .grafico-comparacao { min-height: 300px; }
-}
+  .cartao-info .fechar { width: 40px; height: 40px; font-size: 24px; }
 
-.cab-sensores, .info-fonte { flex-shrink: 0; }
+  /* diálogos em tela cheia: cabeçalho com × e ações sempre visíveis */
+  .dialogo,
+  .dialogo-resposta {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+  .dialogo .form-config { gap: 10px; padding-bottom: 0; }
+  .dialogo .form-config > .cab-modo {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px 16px;
+    background: var(--fundo-painel-forte);
+    border-bottom: 1px solid var(--borda);
+    flex-wrap: nowrap;
+  }
+  .dialogo .form-config > fieldset { margin: 0 12px; }
+  .acoes-dialogo {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--fundo-painel-forte);
+    border-top: 1px solid var(--borda);
+    flex-wrap: wrap;
+  }
+  .duas-colunas { grid-template-columns: minmax(0, 1fr); }
+  .tabela-limites input { width: 76px; }
+
+  /* alvos de toque maiores; 16px evita o zoom automático do iOS nos campos */
+  .botao { min-height: 36px; }
+  .botao.mini { min-height: 32px; padding: 5px 10px; }
+  .lista-componentes li button { padding: 11px 8px; font-size: 14px; }
+  .chip { padding: 7px 11px; font-size: 13px; }
+  select, input[type="text"], input[type="number"], input[type="password"], input:not([type]), textarea { font-size: 16px; }
+  .sensor-cab { min-height: 32px; }
+}

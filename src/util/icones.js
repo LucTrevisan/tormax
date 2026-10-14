@@ -23,6 +23,11 @@ export const ICONES = {
   marcador: "M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z",
   baixar: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
   abrir: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",
+  // navegação no celular
+  camadas: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+  grafico: "M3 3v18h18M7 14l4-4 4 4 5-6",
+  controles: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
+  fechar: "M18 6L6 18M6 6l12 12",
 };
 
 /** Retorna um <svg> em texto, para usar em innerHTML. */

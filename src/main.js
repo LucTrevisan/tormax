@@ -25,6 +25,7 @@ import { criarFonteReplay } from "./fontes/fonteReplay.js";
 import { criarPainelReplay } from "./ui/painelReplay.js";
 import { criarGravacaoUI } from "./ui/gravacaoUI.js";
 import { criarPainelDesafio } from "./ui/painelDesafio.js";
+import { criarLayoutMovel } from "./ui/layoutMovel.js";
 import { concluirCarregamento, erroCarregamento, progressoCarregamento } from "./ui/carregamento.js";
 
 const parametros = new URLSearchParams(location.search);
@@ -171,6 +172,9 @@ async function iniciar() {
 
   await modos.ativar(parametros.get("modo") ?? "simulacao");
 
+  // celular: abas e folhas que recolhem (só interface)
+  const layoutMovel = criarLayoutMovel({ camera, scene });
+
   // Compila os shaders antes de revelar a cena (evita peças surgindo aos poucos).
   await scene.whenReadyAsync();
   concluirCarregamento();
@@ -205,6 +209,7 @@ async function iniciar() {
     replay,
     painelReplay,
     painelDesafio,
+    layoutMovel,
     vistaInicial,
     moverRotulo: (id, x, y, z) => pontos.mover(id, x, y, z),
   });
